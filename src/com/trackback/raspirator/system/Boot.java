@@ -1,8 +1,8 @@
 package com.trackback.raspirator.system;
 
-import com.trackback.raspirator.core.D;
-import com.trackback.raspirator.core.Life;
 import com.trackback.raspirator.hardware.Hardware;
+import com.trackback.raspirator.tools.D;
+import com.trackback.raspirator.tools.Life;
 
 public class Boot {
 	private final String TAG = "Boot";

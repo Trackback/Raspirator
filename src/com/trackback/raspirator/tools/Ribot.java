@@ -1,18 +1,17 @@
-package com.trackback.raspirator.system;
+package com.trackback.raspirator.tools;
 
-import com.trackback.raspirator.tools.D;
-import com.trackback.raspirator.tools.Ribot;
-
-public class Actions extends Ribot{
-	public final String TAG = "Actions";
+public class Ribot extends Life implements LifeListener {
+	private final String TAG = "Ribot";
 	
-	public Actions() {
-		// TODO Auto-generated constructor stub
+	public Ribot() {
+		onCreate();
 	}
-	
+
 	@Override
 	public void onCreate() {
+		setListener(this);
 		D.log(TAG, "Ready");
+
 	}
 
 	@Override
@@ -35,6 +34,7 @@ public class Actions extends Ribot{
 
 	@Override
 	public void onDestroy() {
+		removeListner(this);
 	}
 
 }
