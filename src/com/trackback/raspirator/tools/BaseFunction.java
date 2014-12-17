@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
@@ -148,5 +149,21 @@ public class BaseFunction {
 		}
 		joined = joined.replace("\n$", "");
 		return joined;
+	}
+	
+	public String getStringFromFile(String path) {
+		BufferedReader r = readFromFile(path);
+		String line = "";
+		String upend = "";
+		if (r != null) {
+			try {
+				while ((line = r.readLine()) != null) {
+					upend += line;
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return upend;
 	}
 }
