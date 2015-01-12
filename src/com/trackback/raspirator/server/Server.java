@@ -47,7 +47,12 @@ class Server extends Thread implements ServerBridg {
 				}
 				D.log(TAG, "Master sad: " + data);
 				if (data.equals("exit")) {
+					D.log(TAG, "Good by!");
+					break;
+				}
+				if(data.equals("die")){
 					D.log(TAG, "Die");
+					System.exit(0);
 					break;
 				}
 			}
@@ -74,9 +79,14 @@ class Server extends Thread implements ServerBridg {
 			String[] args = data.split("\\r?\\n");
 			for (String string : args) {
 				D.log(string);
-				os.write(string.getBytes());	
+				if(string.getBytes() != null && os != null){
+					os.write(string.getBytes());
+				}else{
+					System.out.println("Connection stil down!");
+				}
+						
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			D.log("Master can't hear me");
 			e.printStackTrace();
 		}

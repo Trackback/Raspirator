@@ -16,14 +16,14 @@ public class Boot {
 	public static Interpreter interpreter;
 	public static BaseFunction bf;
 	
-	public Boot() {
+	public Boot(int port) {
 		D.log(TAG, "Initializing...");
 		bf = new BaseFunction();
 		life = new Life();
 		hw = new Hardware();
 		actions = new Actions();
 		interpreter = new Interpreter();
-		ServerAdmin.init(interpreter);
+		ServerAdmin.init(interpreter, port);
 		onCreate();	
 	}
 	

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Life {
 	private List<LifeListener> listeners = new ArrayList<LifeListener>();
-	private final String TAG = "Life";
+//	private final String TAG = "Life";
 	
 	public Life() {
 	}

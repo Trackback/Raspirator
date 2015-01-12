@@ -23,5 +23,9 @@ public class Command {
 	public List<String> getCommandsList(){
 		return interpreter.getCommandsIndex();
 	}
+	
+	public CommandListner getListener(){
+		return listener;
+	}
 
 }

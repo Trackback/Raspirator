@@ -1,10 +1,14 @@
 package com.trackback.raspirator.console;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import com.trackback.raspirator.console.commands.Exec;
 import com.trackback.raspirator.console.commands.Help;
+import com.trackback.raspirator.constants.ConstantsArgs;
 import com.trackback.raspirator.server.onServerGetRequest;
+import com.trackback.raspirator.settings.Settings;
 import com.trackback.raspirator.system.Boot;
 import com.trackback.raspirator.tools.D;
 
@@ -21,9 +25,9 @@ public class Interpreter implements onServerGetRequest, CommandListner{
 	}
 	
 	private void prepareCommandsIndex(){
-		String index = Boot.bf.getStringFromFile("values/commands.list");
-		String[] splited = index.split(",");
-		for (String string : splited) {
+		String[] splited = ConstantsArgs.commands.split(",");
+		for (int i = 0; i < splited.length; i++) {
+			String string = splited[i];
 			D.log("Add to index "+string);
 			commandsList.add(string.trim());
 		}
@@ -81,12 +85,27 @@ public class Interpreter implements onServerGetRequest, CommandListner{
 			case 0:
 				new Help(this);
 				break;
-
+			case 1:
+				Exec e = new Exec(this);
+				String str = Boot.bf.join(" ",args);
+				str = str.replace("exec ", "");
+				e.exec(str);
+				break;
+			case 2:
+				bridg.sendResponseToClient("Raspirator version is "+Settings.ver);
+				break;
 			default:
+				bridg.sendResponseToClient("What do you want? Ha!?");
 				break;
 			}
 		}else{
-			bridg.sendResponseToClient("Command not found");
+			bridg.sendResponseToClient("Command "+args[0]+" not found \n Pleas, type help to get commands list "+commandsList.size());
+			Iterator<String> it = commandsList.iterator();
+			
+			while(it.hasNext()){
+				bridg.sendResponseToClient(it.next());
+			}
+			
 		}
 	}
 

@@ -17,7 +17,7 @@ public class Help extends Command{
 		String dsc = Boot.bf.getStringFromFile("values/help.dsc");
 		sendToClient(dsc);
 		
-		Iterator iterator = getCommandsList().iterator();
+		Iterator<String> iterator = getCommandsList().iterator();
 		
 		while(iterator.hasNext()){
 			sendToClient(iterator.next()+" \n");
