@@ -16,6 +16,7 @@ class Server extends Thread implements ServerBridg {
 	private OutputStream os;
 	
 	public Server(int num, Socket s) {
+		super();
 		this.connetctionCounter = num;
 		this.socket = s;
 
@@ -32,6 +33,7 @@ class Server extends Thread implements ServerBridg {
 		this.listner = listner;
 	}
 
+	@Override
 	public void run() {
 		try {
 			InputStream is = socket.getInputStream();
@@ -42,12 +44,17 @@ class Server extends Thread implements ServerBridg {
 				int r = is.read(buf);
 
 				String data = new String(buf, 0, r);
+				D.log(TAG, "Master sad: " + data);
 				if(isListened()){
 					listner.onGetRequest(data);
 				}
-				D.log(TAG, "Master sad: " + data);
 				if (data.equals("exit")) {
+					D.log(TAG, "Good by!");
+					break;
+				}
+				if(data.equals("die")){
 					D.log(TAG, "Die");
+					System.exit(0);
 					break;
 				}
 			}
@@ -74,9 +81,14 @@ class Server extends Thread implements ServerBridg {
 			String[] args = data.split("\\r?\\n");
 			for (String string : args) {
 				D.log(string);
-				os.write(string.getBytes());	
+				if(string.getBytes() != null && os != null){
+					os.write(string.getBytes());
+				}else{
+					D.log("Connection stil down!");
+				}
+						
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			D.log("Master can't hear me");
 			e.printStackTrace();
 		}

@@ -2,7 +2,7 @@ package com.trackback.raspirator.console;
 
 import java.util.List;
 
-public class Command {
+public class Command{
 	CommandListner listener;
 	Interpreter interpreter;
 	
@@ -22,6 +22,10 @@ public class Command {
 	
 	public List<String> getCommandsList(){
 		return interpreter.getCommandsIndex();
+	}
+	
+	public CommandListner getListener(){
+		return listener;
 	}
 
 }

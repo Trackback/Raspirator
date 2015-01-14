@@ -1,12 +1,11 @@
 package com.trackback.raspirator.tools;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.util.Scanner;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -14,9 +13,7 @@ import com.trackback.raspirator.Main;
 
 public class BaseFunction {
 	private Preferences pref = Preferences.systemNodeForPackage(getClass());
-	
 	public BaseFunction() {
-
 	}
 
 	/**
@@ -57,28 +54,6 @@ public class BaseFunction {
 			writer.append(str);
 			writer.close();
 		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public BufferedReader readFromFile(String file) {
-		File src = new File(Main.class.getResource("resources/" + file).getPath());
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(src));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		return br;
-	}
-	
-	public void clearFile(String file){
-		PrintWriter writer;
-		try {
-			writer = new PrintWriter(new File(Main.class.getResource("resources/"+file).getPath()));
-			writer.write("");
-			writer.close();
-		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}
@@ -143,7 +118,7 @@ public class BaseFunction {
 	public String join (String glue, String[] array){
 		String joined = "";
 		for (String item : array) {
-			if(item != null && !item.equals(null) && item.length() > 1){
+			if(item != null && !item.equals(null) && item.length() > 0){
 				joined += item+glue;
 			}
 		}
@@ -151,19 +126,32 @@ public class BaseFunction {
 		return joined;
 	}
 	
-	public String getStringFromFile(String path) {
-		BufferedReader r = readFromFile(path);
-		String line = "";
-		String upend = "";
-		if (r != null) {
-			try {
-				while ((line = r.readLine()) != null) {
-					upend += line;
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+	public static String readFileAsString(String file) {
+		String result = "";
+		try {
+			result = new Scanner(new File(file)).useDelimiter("[//r?//n]+").next();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
 		}
+		return result;
+	}
+	
+	public String getStringFromFile(String path) {
+		String upend = "";
+	    try {  
+	        InputStream in = Main.class.getResourceAsStream("/com/trackback/raspirator/resources/"+ path);
+	        Scanner scanner = new Scanner(in).useDelimiter("/n?\n");
+//	        BufferedReader rdr = new BufferedReader(new InputStreamReader(in));
+	        String line;
+	        while (scanner.hasNext()) {
+	            upend += scanner.next();
+	        }
+	        scanner.close();
+	    } catch (Exception ex) {
+	        System.err.println(ex);
+	        ex.printStackTrace();
+	    }
 		return upend;
 	}
+	
 }
