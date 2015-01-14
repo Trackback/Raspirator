@@ -84,7 +84,11 @@ class Server extends Thread implements ServerBridg {
 				if(string.getBytes() != null && os != null){
 					os.write(string.getBytes());
 				}else{
+<<<<<<< HEAD
 					D.log("Connection stil down!");
+=======
+					System.out.println("Connection stil down!");
+>>>>>>> 849731cb6b4e1dfc4b46ca61a9a98d9c2619683c
 				}
 						
 			}
