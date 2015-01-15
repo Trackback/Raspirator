@@ -6,14 +6,9 @@ import java.util.List;
 
 import com.trackback.raspirator.console.commands.Exec;
 import com.trackback.raspirator.console.commands.Help;
-<<<<<<< HEAD
 import com.trackback.raspirator.console.commands.Pin;
 import com.trackback.raspirator.console.commands.Top;
 import com.trackback.raspirator.constants.ConstantsArgs;
-import com.trackback.raspirator.hardware.gpio.Gpio;
-=======
-import com.trackback.raspirator.constants.ConstantsArgs;
->>>>>>> 849731cb6b4e1dfc4b46ca61a9a98d9c2619683c
 import com.trackback.raspirator.server.onServerGetRequest;
 import com.trackback.raspirator.settings.Settings;
 import com.trackback.raspirator.system.Boot;
@@ -100,7 +95,6 @@ public class Interpreter implements onServerGetRequest, CommandListner{
 				new Help(self);
 				break;
 			case 1:
-<<<<<<< HEAD
 				new Thread(new Runnable() {
 					
 					@Override
@@ -110,17 +104,11 @@ public class Interpreter implements onServerGetRequest, CommandListner{
 						exec.exec(args);
 					}
 				}).run();
-=======
-				Exec e = new Exec(this);
-				String str = Boot.bf.join(" ",args);
-				str = str.replace("exec ", "");
-				e.exec(str);
->>>>>>> 849731cb6b4e1dfc4b46ca61a9a98d9c2619683c
+
 				break;
 			case 2:
 				bridg.sendResponseToClient("Raspirator version is "+Settings.ver);
 				break;
-<<<<<<< HEAD
 			case 3:
 			case 4:
 			case 5:
@@ -137,8 +125,6 @@ public class Interpreter implements onServerGetRequest, CommandListner{
 			case 6:
 				pin.exec(str);
 				break;
-=======
->>>>>>> 849731cb6b4e1dfc4b46ca61a9a98d9c2619683c
 			default:
 				bridg.sendResponseToClient("What do you want? Ha!?");
 				break;

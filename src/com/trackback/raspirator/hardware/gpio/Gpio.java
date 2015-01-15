@@ -26,7 +26,6 @@ public class Gpio {
 		return (listener == null)? false : true;
 	}
 	
-<<<<<<< HEAD
 	public void bind(){
 
 	}
@@ -104,7 +103,4 @@ public class Gpio {
 		
 	}
 	
-=======
->>>>>>> 849731cb6b4e1dfc4b46ca61a9a98d9c2619683c
-
 }

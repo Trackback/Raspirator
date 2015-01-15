@@ -3,10 +3,7 @@ package com.trackback.raspirator.tools;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
-<<<<<<< HEAD
 import java.io.InputStream;
-=======
->>>>>>> 849731cb6b4e1dfc4b46ca61a9a98d9c2619683c
 import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.prefs.BackingStoreException;
@@ -132,11 +129,7 @@ public class BaseFunction {
 	public static String readFileAsString(String file) {
 		String result = "";
 		try {
-<<<<<<< HEAD
 			result = new Scanner(new File(file)).useDelimiter("[//r?//n]+").next();
-=======
-			result = new Scanner(new File(file)).useDelimiter("[\\r\\n]+").next();
->>>>>>> 849731cb6b4e1dfc4b46ca61a9a98d9c2619683c
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -144,7 +137,6 @@ public class BaseFunction {
 	}
 	
 	public String getStringFromFile(String path) {
-<<<<<<< HEAD
 		String upend = "";
 	    try {  
 	        InputStream in = Main.class.getResourceAsStream("/com/trackback/raspirator/resources/"+ path);
@@ -155,15 +147,6 @@ public class BaseFunction {
 	            upend += scanner.next();
 	        }
 	        scanner.close();
-=======
-        
-		String upend = "";
-	    try {
-	        Scanner s = new Scanner(new File(Main.class.getResource("resources/"+ path).getPath())).useDelimiter("/n");
-	        while (s.hasNext()) {
-	        	upend += s.next();
-	        }
->>>>>>> 849731cb6b4e1dfc4b46ca61a9a98d9c2619683c
 	    } catch (Exception ex) {
 	        System.err.println(ex);
 	        ex.printStackTrace();

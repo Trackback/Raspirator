@@ -12,6 +12,9 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.trackback.raspirator.console.Command;
 import com.trackback.raspirator.console.Interpreter;
 import com.trackback.raspirator.hardware.gpio.Gpio;
+import com.trackback.raspirator.json.JSONObject;
+import com.trackback.raspirator.json.JSONStringer;
+import com.trackback.raspirator.system.Boot;
 import com.trackback.raspirator.tools.D;
 
 public class Pin extends Command {
@@ -27,7 +30,6 @@ public class Pin extends Command {
 		
 		commandsList.add("-c");
 		commandsList.add("-r");
-		commandsList.add("-R");
 		commandsList.add("-l");
 		commandsList.add("-s");
 		commandsList.add("-L");
@@ -46,6 +48,7 @@ public class Pin extends Command {
 		D.log("PIN", "Lookup "+args);
 		try{
 			String[] parsedItem = parseArgs(args);
+			int key = 0;
 			for (String arg : parsedItem) {
 				int index = commandsList.indexOf(arg);
 				if(index >= 0){
@@ -54,27 +57,35 @@ public class Pin extends Command {
 						create(parseItem(new PinItem(),parsedItem));
 						break;
 					case 1:
-						remove();
+						if(key + 1 < parsedItem.length){
+							int pid = Integer.parseInt(parsedItem[key + 1]);
+							remove(pid);
+						}else{
+							sendToClient("Wrong pin id!");
+						}
 						break;
 					case 2:
-						replace();
-						break;
-					case 3:
 						list();
 						break;
-					case 4:
+					case 3:
 						save();
 						break;
-					case 5:
+					case 4:
 						load();
 						break;
-					case 6:
-						break;
+					case 5:
+						if(key + 1 < parsedItem.length){
+							int pid = Integer.parseInt(parsedItem[key + 1]);
+							edit(pid, parsedItem);
+						}else{
+							sendToClient("Wrong pin id!");
+						}						break;
 					default:
 						sendToClient("Wrong arguments, pleas, check see manual!");
 						break;
 					}
 				}
+				key++;
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -84,11 +95,11 @@ public class Pin extends Command {
 	
 	private void create(PinItem item){
 		if(item.ioType.equals("input")){
-			item.pinInput = gpio.createPinInput(item.number, item.name, item.state);
+			item.pinInput = makePinInput(item);
 			sendToClient(("Created pin "+item.name+" at "+item.number+" position with i/o type "+item.ioType));
 			pins.add(item);
 		}else if (item.ioType.equals("output")) {
-			item.pinOutput = gpio.createPinOutput(item.number, item.name, item.state);
+			item.pinOutput = makePinOutput(item);
 			sendToClient(("Created pin "+item.name+" at "+item.number+" position with i/o type "+item.ioType));
 			pins.add(item);
 		}else{
@@ -96,16 +107,47 @@ public class Pin extends Command {
 		}
 	}
 	
-	private void edit(int pid){
+	private PinItem makePin(PinItem item){
+		if(item.ioType.equals("input")){
+			item.pinInput = makePinInput(item);
+		}else if (item.ioType.equals("output")) {
+			item.pinOutput = makePinOutput(item);
+		}
+		return item;
+	}
+	
+	private GpioPinDigitalInput makePinInput(PinItem item){
+			return gpio.createPinInput(item.number, item.name, item.state);
+	}
+	
+	private GpioPinDigitalOutput makePinOutput(PinItem item){
+			return gpio.createPinOutput(item.number, item.name, item.state);
+	}	
+	private void edit(int pid, String[] args){
+		if(pins.size() > pid){
+			pins.set(pid, makePin(parseItem(new PinItem(),args)));
+			sendToClient("Pin with id "+pid+" was saved successful!");
+		}else{
+			sendToClient("Pin with id "+pid+" not found!");
+		}
 		
 	}
 	
-	private void remove(){
+	private void remove(int pid){
+		List<PinItem> tmpPins = new  ArrayList<Pin.PinItem>();
+		tmpPins = pins;
 		
-	}
-	
-	private void replace(){
-		
+		pins.clear();
+		Iterator<PinItem> iterator = tmpPins.iterator();
+		int id = 0;
+		while(iterator.hasNext()){
+			PinItem item = iterator.next();
+			if(id != pid){
+				pins.add(item);
+			}
+			id++;
+		}
+		tmpPins.clear();
 	}
 	
 	private void list(){
@@ -120,11 +162,40 @@ public class Pin extends Command {
 	}
 	
 	private void save(){
-		
+		Iterator<PinItem> iterator = pins.iterator();
+		int i = 0;
+		sendToClient("Saving...");
+		String pins = "";
+		while(iterator.hasNext()){
+			PinItem item = iterator.next();
+			pins += item.toString()+" ## ";
+			sendToClient(i+" - "+item.name+" - "+item.number+" - "+item.ioType+"saved");
+			i++;
+		}
+		Boot.bf.putToSettings("pins", pins);
+		sendToClient("Saving complite");
 	}
 	
 	private void load(){
+		String str = Boot.bf.getFromSettings("pins", "");
 		
+		if(str.length() > 0){
+			String[] pinsStrings = str.split(" ## ");
+			if(pinsStrings.length > 0){
+				pins.clear();
+				for (String pin : pinsStrings) {
+					PinItem item = new PinItem();
+					item.fromString(pin);
+					pins.add(makePin(item));
+					sendToClient("Restored "+item.name+" with I/O type "+item.ioType);
+				}
+				sendToClient("Loading finish!");
+			}else{
+				sendToClient("Opps. We have a problem at restoring pins! Data was buged!");
+			}
+		}else{
+			sendToClient("Saved pins not found!");
+		}
 	}
 	
 	private String[] parseArgs(String argsString){
@@ -199,6 +270,42 @@ public class Pin extends Command {
 		
 		public PinItem(){
 			
+		}
+		
+		public String toString(){
+			String str = "";
+			try{
+				str = new JSONStringer()
+				.object()
+					.key("name")
+					.value(name)
+				.object()
+					.key("state")
+					.value(state)
+				.object()
+					.key("number")
+					.value(number)
+				.object()
+					.key("iotype")
+					.value(ioType)
+				.object()
+					.key("command")
+					.value(command).toString();
+			}catch(Exception e){
+				e.printStackTrace();
+				sendToClient(e.getMessage());
+			}
+			
+			return str;
+		}
+		
+		public void fromString(String str){
+			JSONObject obj = new JSONObject(str);
+			name = obj.getString("name");
+			state = obj.getString("state");
+			number = obj.getInt("number");
+			ioType = obj.getString("iotype");
+			command = obj.getString("command");
 		}
 		
 		public boolean isPin(){
@@ -281,7 +388,7 @@ public class Pin extends Command {
 						}
 					});
 				}else{
-					
+					sendToClient("The outputs pins did not has listners");
 				}
 			}
 		}
