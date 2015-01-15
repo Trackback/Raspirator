@@ -20,3 +20,8 @@ Today futures list is:
 + Added connection controller. Now client notify you where connection will be lost.
 + Added command ver. Its tell you version of your server.
 + Fixed some bugs
+
+[0.0.2]
++ Added GPIO manager.
++ Fix saving data
++ Fixed bugs
