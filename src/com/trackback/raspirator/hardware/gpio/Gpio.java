@@ -26,8 +26,8 @@ public class Gpio {
 		return (listener == null)? false : true;
 	}
 	
-	public void bind(){
-
+	public void reset(){
+		gController.shutdown();
 	}
 	
 	public GpioPinAnalogInput createAnalogPinInput(int pin, String name, String state){

@@ -12,6 +12,7 @@ import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import com.trackback.raspirator.console.Command;
 import com.trackback.raspirator.console.Interpreter;
 import com.trackback.raspirator.hardware.gpio.Gpio;
+import com.trackback.raspirator.json.JSONArray;
 import com.trackback.raspirator.json.JSONObject;
 import com.trackback.raspirator.json.JSONStringer;
 import com.trackback.raspirator.system.Boot;
@@ -44,7 +45,7 @@ public class Pin extends Command {
 		
 	}
 	
-	public void exec(String args){
+	public boolean exec(String args){
 		D.log("PIN", "Lookup "+args);
 		try{
 			String[] parsedItem = parseArgs(args);
@@ -55,7 +56,7 @@ public class Pin extends Command {
 					switch (index) {
 					case 0:
 						create(parseItem(new PinItem(),parsedItem));
-						break;
+						return false;
 					case 1:
 						if(key + 1 < parsedItem.length){
 							int pid = Integer.parseInt(parsedItem[key + 1]);
@@ -63,26 +64,27 @@ public class Pin extends Command {
 						}else{
 							sendToClient("Wrong pin id!");
 						}
-						break;
+						return false;
 					case 2:
 						list();
-						break;
+						return false;
 					case 3:
 						save();
-						break;
+						return false;
 					case 4:
 						load();
-						break;
+						return false;
 					case 5:
 						if(key + 1 < parsedItem.length){
 							int pid = Integer.parseInt(parsedItem[key + 1]);
 							edit(pid, parsedItem);
 						}else{
 							sendToClient("Wrong pin id!");
-						}						break;
+						}						
+						return false;
 					default:
 						sendToClient("Wrong arguments, pleas, check see manual!");
-						break;
+						return false;
 					}
 				}
 				key++;
@@ -91,6 +93,7 @@ public class Pin extends Command {
 			e.printStackTrace();
 			sendToClient(e.getMessage());
 		}
+		return false;
 	}
 	
 	private void create(PinItem item){
@@ -144,10 +147,20 @@ public class Pin extends Command {
 			PinItem item = iterator.next();
 			if(id != pid){
 				pins.add(item);
+			}else{
+				item.destroy();
 			}
 			id++;
 		}
 		tmpPins.clear();
+	}
+	
+	private void clear(){
+		Iterator<PinItem>iterator = pins.iterator();
+		while(iterator.hasNext()){
+			PinItem pin = iterator.next();
+			pin.destroy();
+		}
 	}
 	
 	private void list(){
@@ -169,7 +182,7 @@ public class Pin extends Command {
 		while(iterator.hasNext()){
 			PinItem item = iterator.next();
 			pins += item.toString()+" ## ";
-			sendToClient(i+" - "+item.name+" - "+item.number+" - "+item.ioType+"saved");
+			sendToClient(i+" - "+item.name+" - "+item.number+" - "+item.ioType+" saved");
 			i++;
 		}
 		Boot.bf.putToSettings("pins", pins);
@@ -178,6 +191,9 @@ public class Pin extends Command {
 	
 	private void load(){
 		String str = Boot.bf.getFromSettings("pins", "");
+		gpio.reset();
+		gpio = new Gpio();
+		clear();
 		
 		if(str.length() > 0){
 			String[] pinsStrings = str.split(" ## ");
@@ -192,6 +208,7 @@ public class Pin extends Command {
 				sendToClient("Loading finish!");
 			}else{
 				sendToClient("Opps. We have a problem at restoring pins! Data was buged!");
+				sendToClient(str);
 			}
 		}else{
 			sendToClient("Saved pins not found!");
@@ -276,21 +293,21 @@ public class Pin extends Command {
 			String str = "";
 			try{
 				str = new JSONStringer()
-				.object()
-					.key("name")
-					.value(name)
-				.object()
-					.key("state")
-					.value(state)
-				.object()
-					.key("number")
-					.value(number)
-				.object()
-					.key("iotype")
-					.value(ioType)
-				.object()
-					.key("command")
-					.value(command).toString();
+				.array()
+					.object()
+						.key("name")
+						.value(name)
+						.key("state")
+						.value(state)
+						.key("number")
+						.value(number)
+						.key("iotype")
+						.value(ioType)
+						.key("command")
+						.value(command)
+					.endObject()
+				.endArray()
+				.toString();
 			}catch(Exception e){
 				e.printStackTrace();
 				sendToClient(e.getMessage());
@@ -300,7 +317,9 @@ public class Pin extends Command {
 		}
 		
 		public void fromString(String str){
-			JSONObject obj = new JSONObject(str);
+			JSONArray array = new JSONArray(str);
+
+			JSONObject obj = array.getJSONObject(0);
 			name = obj.getString("name");
 			state = obj.getString("state");
 			number = obj.getInt("number");
@@ -391,6 +410,15 @@ public class Pin extends Command {
 					sendToClient("The outputs pins did not has listners");
 				}
 			}
+		}
+		
+		public void destroy(){
+			if(isInputType()){
+				pinInput.clearProperties();
+			}else{
+				pinOutput.clearProperties();
+			}
+			
 		}
 		
 	}
