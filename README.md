@@ -51,7 +51,7 @@ Commands list:
   
   `pin -e 0 -n [name] -s [state] -io [type] -i [pin number on board]`
   
-  `-r` - remove pi
+  `-r` - remove pin
   
   `pin -r 0`
   
@@ -60,6 +60,11 @@ Commands list:
   `-L` - load saved pins map
 
 # History
+
+[0.0.2]
++ Added GPIO manager.
++ Fix saving data
++ Fixed bugs
 
 [0.0.1]
 + Added port binding. Now you can set the port number for server like this:
@@ -70,7 +75,3 @@ Commands list:
 + Added command ver. Its tell you version of your server.
 + Fixed some bugs
 
-[0.0.2]
-+ Added GPIO manager.
-+ Fix saving data
-+ Fixed bugs
