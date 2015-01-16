@@ -1,0 +1,52 @@
+Command pin
+
+You can bind the commands on pins 
+like on led on gpio 0 when button on gpio 12 was pressed. 
+
+Use its commands
+
+pin [flag] [args]
+
+flags:
+
+-c : Create pin bind.
+[
+	-n    : Name of pin. Like led, button etc.
+	-i    :  Number of phisical gpio on the board.
+	-io   : I/O type of pin. input - for button and output - for leds or etc.
+	-s    : State of pin, it is on or off. Default state is off.
+	-con  : Execute command when pin is in state on.
+	-coff : Execute command when pin is in state off.
+	-p    : Pulse. It is on pin on set time in ms.
+	-t    : Toggle pin state.
+]
+To create a pin bind just sending command:
+
+pin -c -n led -i 0 -io outout -s on
+
+
+-e : Edit pin. If you want to change pin params, you can edit it,
+ just use command : pin -e [pid] 
+where pid is number of pin from list of command: pin -l
+end set flags from command pin -c, like:
+
+pin -e 0 -s off
+
+-r : Remove pin from list of pins
+
+pin -r [pid] 
+
+-l : Show list of binded pins
+
+pin -l
+
+-s : Save all binded pins as map.
+ You can reboot you device 
+ or switch off server - all pins was be saveing.
+
+pin -s
+
+-L : Load saved pins map. Its  rebinded all saved pins again
+
+pin -L
+

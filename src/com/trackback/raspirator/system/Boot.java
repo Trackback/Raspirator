@@ -29,7 +29,7 @@ public class Boot {
 	
 	private void onCreate(){
 		life.onCreate();
-		D.log(TAG, "Initilized");
+		D.log(TAG, "I am a life!");
 	}
 
 }

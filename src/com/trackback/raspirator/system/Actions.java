@@ -1,9 +1,9 @@
 package com.trackback.raspirator.system;
 
 import com.trackback.raspirator.tools.D;
-import com.trackback.raspirator.tools.Ribot;
+import com.trackback.raspirator.tools.Raspirator;
 
-public class Actions extends Ribot{
+public class Actions extends Raspirator{
 	public final String TAG = "Actions";
 	
 	public Actions() {

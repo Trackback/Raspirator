@@ -1,9 +1,9 @@
 package com.trackback.raspirator.hardware;
 
 import com.trackback.raspirator.tools.D;
-import com.trackback.raspirator.tools.Ribot;
+import com.trackback.raspirator.tools.Raspirator;
 
-public class Hardware extends Ribot{
+public class Hardware extends Raspirator{
 	private final String TAG = "Hardware";
 	
 	public Hardware() {

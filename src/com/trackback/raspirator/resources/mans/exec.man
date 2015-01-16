@@ -1,0 +1,10 @@
+Command exec
+
+You can execute commands of system OS  such as 
+you execute it in system terminal
+just use command exec, like:
+
+exec ping 8.8.8.8
+
+After executing command the process will be destroyed or 
+putted to stack if his life so long (see command top)

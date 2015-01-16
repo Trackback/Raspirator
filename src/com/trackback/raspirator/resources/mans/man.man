@@ -1,0 +1,10 @@
+Command man
+
+Command man will tell you how to use  commands of raspirator 
+All what you need is:
+Find the command what you need from commands list (use command help)
+and set it as argument to command man, like
+
+man man 
+man exec 
+etc

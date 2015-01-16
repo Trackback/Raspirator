@@ -40,8 +40,10 @@ public class Pin extends Command {
 		pinArgs.add("-s");
 		pinArgs.add("-io");
 		pinArgs.add("-i");
-		pinArgs.add("-c");
-		
+		pinArgs.add("-con");
+		pinArgs.add("-coff");
+		pinArgs.add("-p");
+		pinArgs.add("-t");
 		
 	}
 	
@@ -106,7 +108,7 @@ public class Pin extends Command {
 			sendToClient(("Created pin "+item.name+" at "+item.number+" position with i/o type "+item.ioType));
 			pins.add(item);
 		}else{
-			sendToClient("Pin "+item.name+" at "+item.number+" position with i/o type "+item.ioType+" not found");
+			sendToClient("Pin "+item.name+" at "+item.number+" position with i/o type "+item.ioType+" cannot be created");
 		}
 	}
 	
@@ -128,6 +130,7 @@ public class Pin extends Command {
 	}	
 	private void edit(int pid, String[] args){
 		if(pins.size() > pid){
+			pins.get(pid).destroy();
 			pins.set(pid, makePin(parseItem(new PinItem(),args)));
 			sendToClient("Pin with id "+pid+" was saved successful!");
 		}else{
@@ -258,10 +261,28 @@ public class Pin extends Command {
 						break;
 					case 5:
 						if(key+1 < args.length){
-							item.command = args[key+1];
+							item.commandOn = args[key+1];
 						}else{
-							sendToClient("Error! Miss or wrong argument for flag -c");
+							sendToClient("Error! Miss or wrong argument for flag -con");
 						}
+						break;
+					case 6:
+						if(key+1 < args.length){
+							item.commandOff = args[key+1];
+						}else{
+							sendToClient("Error! Miss or wrong argument for flag -coff");
+						}
+						break;
+					case 7:
+						if(key+1 < args.length){
+							long time = Long.parseLong(args[key+1]);
+							item.pulse(time);
+						}else{
+							sendToClient("Error! Miss or wrong argument for flag -p");
+						}
+						break;
+					case 8:
+						item.toggle();
 						break;
 					default:
 						break;
@@ -283,7 +304,8 @@ public class Pin extends Command {
 		public String ioType = "input";
 		public GpioPinDigitalOutput pinOutput = null;
 		public GpioPinDigitalInput pinInput = null;
-		public String command = "";
+		public String commandOn = "";
+		public String commandOff = "";
 		
 		public PinItem(){
 			
@@ -303,8 +325,10 @@ public class Pin extends Command {
 						.value(number)
 						.key("iotype")
 						.value(ioType)
-						.key("command")
-						.value(command)
+						.key("commandon")
+						.value(commandOn)
+						.key("commandoff")
+						.value(commandOff)
 					.endObject()
 				.endArray()
 				.toString();
@@ -324,7 +348,8 @@ public class Pin extends Command {
 			state = obj.getString("state");
 			number = obj.getInt("number");
 			ioType = obj.getString("iotype");
-			command = obj.getString("command");
+			commandOn = obj.getString("commandon");
+			commandOff = obj.getString("commandoff");
 		}
 		
 		public boolean isPin(){
@@ -391,8 +416,9 @@ public class Pin extends Command {
 			return false;
 		}
 		
-		public void setOnInput(final String command){
-			this.command = command;
+		public void setOnInput(final String commandOn, final String commandOff){
+			this.commandOn = commandOn;
+			this.commandOff = commandOff;
 			if(isPin()){
 				if(isInputType()){
 					pinInput.addListener(new GpioPinListenerDigital() {
@@ -402,7 +428,9 @@ public class Pin extends Command {
 								GpioPinDigitalStateChangeEvent event) {
 								sendToClient("Pin "+name+" change state to "+event.getState());
 								if(event.getState() == PinState.HIGH){
-									getListener().onCommandSad(command);
+									getListener().onCommandSad(commandOn);
+								}else{
+									getListener().onCommandSad(commandOff);
 								}
 						}
 					});
@@ -415,8 +443,10 @@ public class Pin extends Command {
 		public void destroy(){
 			if(isInputType()){
 				pinInput.clearProperties();
+				gpio.destroyPin(pinInput);
 			}else{
 				pinOutput.clearProperties();
+				gpio.destroyPin(pinOutput);
 			}
 			
 		}

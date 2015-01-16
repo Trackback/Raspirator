@@ -1,0 +1,13 @@
+Command top
+
+When you using command exec all commands with long time of life
+put into stack. Use command top to see list of its commands.
+You can managing of executed commands:
+
+kill : Force destroy process.
+
+top kill [pid] or kill [pid]
+
+killall : Force destroy all running processes
+
+top killall or killall

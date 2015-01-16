@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.trackback.raspirator.console.commands.Exec;
 import com.trackback.raspirator.console.commands.Help;
+import com.trackback.raspirator.console.commands.Man;
 import com.trackback.raspirator.console.commands.Pin;
 import com.trackback.raspirator.console.commands.Top;
 import com.trackback.raspirator.constants.ConstantsArgs;
@@ -21,6 +22,7 @@ public class Interpreter implements onServerGetRequest, CommandListner{
 	private Exec exec;
 	private Interpreter self = this;
 	private Pin pin;
+	private Man man;
 	public Interpreter() {
 		init();
 	}
@@ -30,6 +32,7 @@ public class Interpreter implements onServerGetRequest, CommandListner{
 		top = new Top(this);
 		exec = new Exec(this, top);
 		pin = new Pin(this);
+		man = new Man(this);
 	}
 	
 	private void prepareCommandsIndex(){
@@ -100,7 +103,7 @@ public class Interpreter implements onServerGetRequest, CommandListner{
 					@Override
 					public void run() {				
 
-						String args = str.replace("exec ", "");
+						String args = str.replaceFirst("exec ", "");
 						exec.exec(args);
 					}
 				}).run();
@@ -117,13 +120,16 @@ public class Interpreter implements onServerGetRequest, CommandListner{
 					@Override
 					public void run() {
 						D.log("Full args "+str);
-						String args = str.replace("top ", "");
+						String args = str.replaceFirst("top ", "");
 						top.exec(args);
 					}
 				}).run();
 				break;
 			case 6:
 				pin.exec(str);
+				break;
+			case 7:
+				man.exec(str.replaceFirst("man ", ""));
 				break;
 			default:
 				bridg.sendResponseToClient("What do you want? Ha!?");

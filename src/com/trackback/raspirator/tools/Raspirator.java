@@ -1,9 +1,9 @@
 package com.trackback.raspirator.tools;
 
-public class Ribot extends Life implements LifeListener {
-	private final String TAG = "Ribot";
+public class Raspirator extends Life implements LifeListener {
+	private final String TAG = "Raspirator";
 	
-	public Ribot() {
+	public Raspirator() {
 		onCreate();
 	}
 

@@ -2,6 +2,7 @@ package com.trackback.raspirator.hardware.gpio;
 
 import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
+import com.pi4j.io.gpio.GpioPin;
 import com.pi4j.io.gpio.GpioPinAnalogInput;
 import com.pi4j.io.gpio.GpioPinAnalogOutput;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
@@ -28,6 +29,10 @@ public class Gpio {
 	
 	public void reset(){
 		gController.shutdown();
+	}
+	
+	public void destroyPin(GpioPin pin){
+		gController.unprovisionPin(pin);
 	}
 	
 	public GpioPinAnalogInput createAnalogPinInput(int pin, String name, String state){
