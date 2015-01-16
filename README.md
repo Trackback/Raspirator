@@ -13,11 +13,17 @@ Today futures list is:
 # How to
 
 Run server on any OS Windows, Mac or Linux.
+
 On Linux/Mac:
+
 `sudo java -jar raspirator.jar -p 5000`
+
 On Windows:
+
 `java -jar raspirator.jar -p 5000`
+
 or double click on jar file (will be used port 4000).
+
 Where -p is port.
 
 Then, run clien (see raspiratorMaster project) and set remote address and por of your raspirator
