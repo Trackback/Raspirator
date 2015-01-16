@@ -58,8 +58,18 @@ Commands list:
   `-s` - save pins map
   
   `-L` - load saved pins map
-
+  
+  `man` Show you manual to commands
+  
+  `man exec` or `man man` etc
+ 
 # History
+
+[0.0.3]
++ Added pins toggling (see man pin command).
++ Added pins pulse (see man pin command)
++ Added man command (see description)
++ Fixed bugs
 
 [0.0.2]
 + Added GPIO manager.
