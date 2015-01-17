@@ -48,7 +48,8 @@ public class Gpio {
 	}
 	
 	public GpioPinDigitalOutput createPinOutput(int pin, String name, String state){
-		return gController.provisionDigitalOutputPin(getPin(pin), name);
+		PinState s = (state.equals("on"))? PinState.HIGH : PinState.LOW;
+		return gController.provisionDigitalOutputPin(getPin(pin), name, s);
 	}
 	
 	public PinState getPinState(String state){

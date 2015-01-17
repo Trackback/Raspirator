@@ -35,6 +35,7 @@ public class Pin extends Command {
 		commandsList.add("-s");
 		commandsList.add("-L");
 		commandsList.add("-e");
+		commandsList.add("-C");
 		
 		pinArgs.add("-n");
 		pinArgs.add("-s");
@@ -84,6 +85,9 @@ public class Pin extends Command {
 							sendToClient("Wrong pin id!");
 						}						
 						return false;
+					case 6:
+						clear();
+						return false;
 					default:
 						sendToClient("Wrong arguments, pleas, check see manual!");
 						return false;
@@ -131,7 +135,7 @@ public class Pin extends Command {
 	private void edit(int pid, String[] args){
 		if(pins.size() > pid){
 			pins.get(pid).destroy();
-			pins.set(pid, makePin(parseItem(new PinItem(),args)));
+			pins.set(pid, makePin(parseItem(pins.get(pid),args)));
 			sendToClient("Pin with id "+pid+" was saved successful!");
 		}else{
 			sendToClient("Pin with id "+pid+" not found!");
@@ -152,6 +156,7 @@ public class Pin extends Command {
 				pins.add(item);
 			}else{
 				item.destroy();
+				sendToClient("Pin "+item.name+" was destroyed!");
 			}
 			id++;
 		}
@@ -162,8 +167,11 @@ public class Pin extends Command {
 		Iterator<PinItem>iterator = pins.iterator();
 		while(iterator.hasNext()){
 			PinItem pin = iterator.next();
+			sendToClient("Destroy "+pin.name);
 			pin.destroy();
 		}
+		pins.clear();
+		sendToClient("All pins was destroyed!");
 	}
 	
 	private void list(){
@@ -234,6 +242,7 @@ public class Pin extends Command {
 					case 0:
 						if(key+1 < args.length){
 							item.name = args[key+1];
+							sendToClient("name : "+item.name);
 						}else{
 							sendToClient("Error! Miss or wrong argument for flag -n");
 						}
@@ -241,6 +250,7 @@ public class Pin extends Command {
 					case 1:
 						if(key+1 < args.length){
 							item.state = args[key+1];
+							sendToClient("state : "+item.state);
 						}else{
 							sendToClient("Error! Miss or wrong argument for flag -s");
 						}
@@ -248,6 +258,7 @@ public class Pin extends Command {
 					case 2:
 						if(key+1 < args.length){
 							item.ioType = args[key+1];
+							sendToClient("ioType : "+item.ioType);
 						}else{
 							sendToClient("Error! Miss or wrong argument for flag -oi");
 						}
@@ -255,25 +266,28 @@ public class Pin extends Command {
 					case 3:
 						if(key+1 < args.length){
 							item.number = Integer.parseInt(args[key+1]);
+							sendToClient("number : "+item.number);
 						}else{
 							sendToClient("Error! Miss or wrong argument for flag -i");
 						}
 						break;
-					case 5:
+					case 4:
 						if(key+1 < args.length){
 							item.commandOn = args[key+1];
+							sendToClient("commandOn : "+item.commandOn);
 						}else{
 							sendToClient("Error! Miss or wrong argument for flag -con");
 						}
 						break;
-					case 6:
+					case 5:
 						if(key+1 < args.length){
 							item.commandOff = args[key+1];
+							sendToClient("commandOff : "+item.commandOff);
 						}else{
 							sendToClient("Error! Miss or wrong argument for flag -coff");
 						}
 						break;
-					case 7:
+					case 6:
 						if(key+1 < args.length){
 							long time = Long.parseLong(args[key+1]);
 							item.pulse(time);
@@ -281,7 +295,7 @@ public class Pin extends Command {
 							sendToClient("Error! Miss or wrong argument for flag -p");
 						}
 						break;
-					case 8:
+					case 7:
 						item.toggle();
 						break;
 					default:
