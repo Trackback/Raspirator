@@ -13,11 +13,17 @@ Today futures list is:
 # How to
 
 Run server on any OS Windows, Mac or Linux.
+
 On Linux/Mac:
+
 `sudo java -jar raspirator.jar -p 5000`
+
 On Windows:
+
 `java -jar raspirator.jar -p 5000`
+
 or double click on jar file (will be used port 4000).
+
 Where -p is port.
 
 Then, run clien (see raspiratorMaster project) and set remote address and por of your raspirator
@@ -58,8 +64,18 @@ Commands list:
   `-s` - save pins map
   
   `-L` - load saved pins map
-
+  
+  `man` Show you manual to commands
+  
+  `man exec` or `man man` etc
+ 
 # History
+
+[0.0.3]
++ Added pins toggling (see man pin command).
++ Added pins pulse (see man pin command)
++ Added man command (see description)
++ Fixed bugs
 
 [0.0.2]
 + Added GPIO manager.
